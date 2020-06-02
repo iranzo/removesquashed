@@ -103,7 +103,7 @@ def get_github_remote():
     lines = out.split("\n")
     for line in lines:
         parts = line.split("\t")
-        if parts[0] != "origin":
+        if parts[0] != "upstream":
             continue
         m = re.search(r"github.com/([^/]+)/([^./ ]+)", parts[1])
         if not m:
@@ -128,9 +128,9 @@ target_branch = get_current_branch()
 if target_branch != "master":
     warn = "\033[93m"
     clear = "\033[0m"
-    message = "origin/%s%s%s" % (warn, target_branch, clear)
+    message = "upstream/%s%s%s" % (warn, target_branch, clear)
 else:
-    message = "origin/master"
+    message = "upstream/master"
 
 sys.stderr.write(
     "Finding local branches which were merged onto %s via GitHub...%s\n"
@@ -145,11 +145,7 @@ try:
 except GithubException:
     repo = g.get_organization(org).get_repo(repo)
 
-merged_shas = [
-    pr.head.sha
-    for pr in repo.get_pulls(state="closed")
-    if pr.merged and pr.base.ref == target_branch
-]
+merged_shas = [pr.head.sha for pr in repo.get_pulls(state="closed") if pr.merged]
 
 for branch, sha in get_branch_heads().items():
     if sha in merged_shas:
