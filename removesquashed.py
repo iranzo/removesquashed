@@ -30,7 +30,6 @@ import sys
 
 from github import Github
 
-
 DRY_RUN = "--dry-run" in sys.argv
 FORCE_DELETE = "--force" in sys.argv
 
